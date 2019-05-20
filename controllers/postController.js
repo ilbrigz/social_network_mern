@@ -16,23 +16,14 @@ module.exports = {
         next();
       });
   },
-  isPoster: (req, res, next) => {
-    let isPoster =
-      req.post && req.auth && req.post.postedBy._id.toString() === req.auth._id;
-    if (!isPoster) {
-      return res.status(403).json({
-        err: "User is not authorized"
-      });
-    }
-    next();
-  },
   createPost: (req, res) => {
+    // formidable, multer alternative
     const form = new formidable.IncomingForm();
     form.keepExtension = true;
     form.parse(req, (err, fields, files) => {
       if (err) {
         return res.status(400).json({
-          error: "Image cound not be uploaded"
+          error: "Image couldn't be uploaded"
         });
       }
       let post = new Post(fields);
@@ -55,7 +46,6 @@ module.exports = {
     });
   },
   getPosts: (req, res) => {
-    console.log(req.auth);
     Post.find()
       .populate("postedBy", "_id name")
       .select("_id title body")

@@ -1,0 +1,34 @@
+{
+  "files.exclude": {
+    "*.git": true,
+    "*.git.*": true,
+    "*.gitignore": true,
+    "*.gitignore.*": true
+    // "*app": true,
+    // "*app.*": true,
+    // "*client.*": true,
+    // "*controllers": true,
+    // "*controllers.*": true,
+    // "*docs": true,
+    // "*docs.*": true,
+    // "*middlewares": true,
+    // "*middlewares.*": true,
+    // "*models": true,
+    // "*models.*": true,
+    // "*node_modules": true,
+    // "*node_modules.*": true,
+    // "*package": true,
+    // "*package.*": true,
+    // "*target": true,
+    // "*target.*": true,
+    // "*validators": true,
+    // "*validators.*": true,
+    // "*yarn": true,
+    // "*yarn.*": true,
+    // ".env": true,
+    // "client\\node_modules": true,
+    // "client\\README.md": true,
+    // "client\\.gitignore": true,
+    // "client\\public": true
+  }
+}

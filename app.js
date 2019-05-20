@@ -8,12 +8,12 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const expressValidator = require("express-validator");
 const cors = require("cors");
+const path = require("path");
 dotenv.config();
 
 const postRoutes = require("./routes/postRoute");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-// database connection
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true
@@ -34,13 +34,16 @@ app.use(expressValidator());
 app.use(cors());
 
 // routes
-// it will be invoked first
-// will find the user and attach it to req.profile
-// app.param("userId", userById);
-app.use("/", (req, res, next) => res.send("my backend api"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use("/", postRoutes);
 app.use("/", authRoutes);
 app.use("/", userRoutes);
+app.get("/", (req, res, next) => res.send("my backend api"));
+app.use("/*", (req, res, next) =>
+  res.status(500).json({ error: "endpoint does not exist" })
+);
+
+//The requireSignin middleware error here
 app.use(function(err, req, res, next) {
   if (err.name === "UnauthorizedError") {
     res.status(401).json({ error: "Unauthorized" });

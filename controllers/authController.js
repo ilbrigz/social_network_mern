@@ -1,48 +1,68 @@
 const User = require("../models/userSchema");
 const jwt = require("jsonwebtoken");
-const expressJwt = require("express-jwt");
+const uuidv4 = require("uuid/v4");
+
 require("dotenv").config();
 
 module.exports = {
   signup: async (req, res) => {
     const userExists = await User.findOne({ email: req.body.email });
-    if (userExists) return res.status(403).json({ error: "Email is taken!" });
+    if (userExists) return res.status(403).json({ email: ["Email is taken!"] });
     const user = await new User(req.body);
     await user.save();
     return res.status(200).json(user);
   },
   signing: (req, res) => {
     const { email, password } = req.body;
+    const verificationId = uuidv4();
     User.findOne({ email }, (err, user) => {
       if (err || !user) {
         return res.status(401).json({
-          error: "User with that email does not exist. Please signin."
+          reqError: ["User with that email does not exist. Please signin."]
         });
       }
       if (!user.authenticate(password)) {
         return res.status(401).json({
-          error: "Email and password do not match"
+          reqError: ["Email and password do not match"]
         });
       }
-      // generate token
-      const token = jwt.sign({ _id: user.id }, process.env.JWT_SECRET);
-
-      res.cookie("t", token, { expire: new Date() + 9999 });
-
       const { _id, name, email } = user;
 
+      // generate token
+      const token = jwt.sign(
+        { email, name, _id: user.id, payloadVerificationId: verificationId },
+        process.env.JWT_SECRET
+      );
+      // res.setHeader("Access-Control-Allow-Origin", "*");
+
+      // // Request methods you wish to allow
+      // res.setHeader(
+      //   "Access-Control-Allow-Methods",
+      //   "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+      // );
+
+      // // Request headers you wish to allow
+      // res.setHeader(
+      //   "Access-Control-Allow-Headers",
+      //   "X-Requested-With,content-type"
+      // );
+
+      // // Set to true if you need the website to include cookies in the requests sent
+      // // to the API (e.g. in case you use sessions)
+      // res.setHeader("Access-Control-Allow-Credentials", true);
+
+      res.cookie("t", token, { expire: new Date() + 9999, httpOnly: true });
+      res.setHeader("client-verification-id", verificationId);
+
       return res.status(200).json({
-        user: { _id, email, name },
-        token
+        userId: _id,
+        verificationId,
+        name
       });
     });
   },
   signout: (req, res) => {
     res.clearCookie("t");
-    return res.json({ message: "Signout successful" });
-  },
-  reqiureSignin: expressJwt({
-    secret: process.env.JWT_SECRET,
-    userProperty: "auth"
-  })
+    return res.clearCookie("t").json({ message: "Signout successful" });
+  }
 };
