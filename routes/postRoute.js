@@ -5,7 +5,9 @@ const {
   postsByUser,
   postById,
   deletePost,
-  updatePost
+  updatePost,
+  getPhoto,
+  singlePostById
 } = require("../controllers/postController");
 const {
   hasAuthorization,
@@ -16,14 +18,10 @@ const { userById } = require("../controllers/userController");
 const { postValidator } = require("../validators/validator");
 const router = express.Router();
 
+router.get("/post/i/:postId", getPhoto);
+router.get("/post/:postId", singlePostById);
 router.get("/posts", getPosts);
-router.post(
-  "/post/new/:userId",
-  requireSignin,
-  hasAuthorization,
-  postValidator,
-  createPost
-);
+router.post("/post/new/:userId", requireSignin, hasAuthorization, createPost);
 router.get("/posts/by/:userId", postsByUser);
 router.patch("/post/:postId", requireSignin, isPoster, updatePost);
 router.delete("/post/:postId", requireSignin, isPoster, deletePost);

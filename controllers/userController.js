@@ -129,9 +129,7 @@ module.exports = {
   },
   findPeople: (req, res, next) => {
     let following = req.profile.following;
-    console.log(following);
     following.push(req.profile._id);
-    console.log("===>", following);
     // find those nin/ not in the following array
     User.find({ _id: { $nin: following } })
       .select("name")

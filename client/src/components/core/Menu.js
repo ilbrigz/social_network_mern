@@ -41,6 +41,22 @@ class Menu extends React.Component {
             Find People
           </Link>
         </li>
+        <li className="nav-item">
+          <Link
+            className={`nav-link ${isActive(history, "/newpost")}`}
+            to="/newpost"
+          >
+            Create Post
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link
+            className={`nav-link ${isActive(history, "/posts")}`}
+            to="/posts"
+          >
+            All Posts
+          </Link>
+        </li>
         {!this.props.auth.userId && (
           <React.Fragment>
             <li className="nav-item">
